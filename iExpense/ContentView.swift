@@ -17,15 +17,39 @@ class User: ObservableObject {
     @Published var lastName = "Lee"
 }
 
-struct ContentView: View {
+struct SheetView: View {
     @ObservedObject var user = User()
+    var sheetName: String
+
+    @Environment(\.presentationMode) var presentationMode
 
     var body: some View {
-        VStack(alignment: .center){
+        VStack {
+            Text("\(sheetName)")
             Text("Your name is \(user.firstName) \(user.lastName).")
 
             TextField("First name", text: $user.firstName)
             TextField("Last name", text: $user.lastName)
+
+            Button("Dismiss") {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
+        .background(Color.green)
+    }
+}
+
+struct ContentView: View {
+    @State private var showingSheet = false
+
+    var body: some View {
+        VStack(alignment: .center){
+            Button("Show sheet") {
+                showingSheet.toggle()
+            }
+            .sheet(isPresented: $showingSheet) {
+                SheetView(user:User(), sheetName: "Pink Sheet")
+            }
         }
     }
 }
